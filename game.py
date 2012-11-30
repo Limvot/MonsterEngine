@@ -200,7 +200,14 @@ def goOverworld(world):
 	screenPos = [0,0]
 	multiplier = 1
 
-	playerCharacter = Person(parseGridImage("data/npcoverworldsDP.png", (0,0), (32,32), (12,20), (15,24), 1), (10,10))	#create our player character
+	personTileStart = (0,0)
+	personTileEnd = (3,4)
+	bigGrid = (6,6)
+	personTileBegin = personTileEnd[0]*bigGrid[0], personTileEnd[1]*bigGrid[1]
+	personTileEnd = personTileEnd[0]*(bigGrid[0]+1), personTileEnd[1]*(bigGrid[1]+1)
+
+	#Make our player character. Use the list of images loaded from parseGridImages(name, tileStart, tileEnd, beginTile, endTile, step, colorkey, border)
+	playerCharacter = Person(parseGridImage("data/npcoverworldsDP.png", (0,0), (32,32), personTileBegin, personTileEnd, 1, -1, 1), (10,10))	#create our player character
 	NPCList = [Person(parseGridImage("data/npcoverworldsDP.png", (0,0), (32,32), (0,0), (3,4), 1), (10,10))]	#create a random person
 
 	NPCList[0].go( (20,20) )

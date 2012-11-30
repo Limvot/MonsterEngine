@@ -112,9 +112,9 @@ def parseImage(filePath, topCorner, bottomCorner, start, end, step):
 
 	return(tileList)
 
-#takes in a file path and top corner and bottom corner x,y start and end TUPELS, and a step,
+#takes in a file path and top corner and bottom corner x,y start and end TUPELS, and a step, and an optional colorkey,
 #returns a list of images
-def parseGridImage(filePath, topCorner, bottomCorner, start, end, step):
+def parseGridImage(filePath, topCorner, bottomCorner, start, end, step, colorKey=-1, border=0):
 	tileList = []
 	tileSize = (bottomCorner[0] - topCorner[0], bottomCorner[1] - topCorner[1])
 
@@ -137,6 +137,17 @@ def parseGridImage(filePath, topCorner, bottomCorner, start, end, step):
 			newTile = pygame.Surface(tileSize)
 
 			pygame.surfarray.blit_array(newTile, mapFullPixArray[xPixBeg:xPixEnd,yPixBeg:yPixEnd])
+			if colorKey == -1:
+				colorKey = newTile.get_at((0,0))
+			
+			if border != 0:
+				newTileArray = pygame.PixelArray(newTile)
+				newTileArray[:,0:border] = colorKey
+				newTileArray[:,-border:] = colorKey
+				newTileArray[0:border,:] = colorKey
+				newTileArray[-border:,:] = colorKey
+				newTile = newTileArray.make_surface()
+			newTile.set_colorkey(colorKey)
 			tileList.append(newTile)
 
 	return(tileList)
