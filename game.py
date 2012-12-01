@@ -1,4 +1,4 @@
-from mapEdit import *
+from imageAndMapUtil import *
 
 #init the pygame stuff
 pygame.init()

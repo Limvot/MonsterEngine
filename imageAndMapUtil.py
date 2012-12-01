@@ -152,12 +152,12 @@ def parseGridImage(filePath, topCorner, bottomCorner, start, end, step, colorKey
 
 	return(tileList)
 
-def parseMap(filePath, topCorner, bottomCorner, start, end, step):
+def parseMap(screen, filePath, topCorner, bottomCorner, start, end, step):
 
 	imgHashedDict = {}
 
 	tileList = []
-	mapList = []
+	mapDict = {}
 	tileDict = {}
 	numProcessedTiles = 0
 	map = []		#list of tupels, x,y,tileNum
@@ -187,19 +187,19 @@ def parseMap(filePath, topCorner, bottomCorner, start, end, step):
 		retImgID = imgHashedDict.get(imageHash(newTile, tileSize), None)
 		if retImgID == None:
 			newTilePosition = len(tileList)
-			mapList.append( (xPos, yPos, newTilePosition) )	#Note that we use the lenght before the append, which is the index after
+			mapDict[ (xPos, yPos) ] = (newTilePosition, 2)	#Note that we use the lenght before the append, which is the index after
 			tileList.append(newTile)
 			imgHashedDict[imageHash(newTile, tileSize)] = newTilePosition
 			print("Did not find identical")
 		else:
-			mapList.append( (xPos, yPos, retImgID) )
+			mapDict[ (xPos, yPos) ] = (retImgID, 2)
 			print("Found identical!")
 			screen.blit(newTile, (0,0))
 			pygame.display.flip()
 
 		number += step
 
-	return( (mapList, tileList) )
+	return( (mapDict, tileList) )
 
 def saveTileList(tileList, savePath, topCorner, bottomCorner):
 	
@@ -238,10 +238,7 @@ def scaleImageList2x(tileList):
 #returns a map dictionary and a list of tile images
 def loadMap(mapImageName, mapPickleName, tileSize):
 	mapTiles = parseImage(mapImageName, (0,0), tileSize, 0, -1, 1)
-	mapList = pickle.load( open(mapPickleName, "rb") )
-	mapDict = {}
-	for mapTup in mapList:
-		mapDict[(mapTup[0], mapTup[1])] = mapTup[2]
+	mapDict = pickle.load( open(mapPickleName, "rb") )
 	return( (mapDict, mapTiles) )
 	
 def drawMap(mapDict, mapTiles, tileSize, sectionSize, sectionLocation):
@@ -249,7 +246,8 @@ def drawMap(mapDict, mapTiles, tileSize, sectionSize, sectionLocation):
 
 	for yPos in range(sectionLocation[1], sectionLocation[1]+sectionSize[1]):
 		for xPos in range(sectionLocation[0], sectionLocation[0]+sectionSize[0]):
-			mapSection.blit(mapTiles[mapDict.get( (xPos, yPos), 0 )], (tileSize[0]*(xPos-sectionLocation[0]), tileSize[1]*(yPos-sectionLocation[1]) ))
+			#The index into mapTiles is found from the dictionary mapDict getting at a tupel of the current position, then indexing the returned tupel to 0, where the index is stored. indexing the returned tupel to 1 returns tile type
+			mapSection.blit(mapTiles[mapDict.get( (xPos, yPos), (0,0) )[0]], (tileSize[0]*(xPos-sectionLocation[0]), tileSize[1]*(yPos-sectionLocation[1]) ))
 	
 	return(mapSection)
 
