@@ -51,11 +51,7 @@ def tileEdit(screen, tileImageFileName, mapFileName, tileSize):
 
 	#Setup fonts
 	if pygame.font:					#Only if fonts are enabled
-		font = pygame.font.Font(None, 24)										#Font size
-		typeOne = font.render("1", 1, (10, 10, 10))
-		typeTwo = font.render("2", 1, (10, 10, 10))
-		typeThree = font.render("3", 1, (10, 10, 10))
-
+		font = pygame.font.Font(None, 16)										#Font size
 
 
 	stop = False
@@ -66,8 +62,15 @@ def tileEdit(screen, tileImageFileName, mapFileName, tileSize):
 		mapArray[:,:(sectionSize[1]*tileSize[1]):tileSize[1]] = (0,0,0)
 		mapSurface = mapArray.make_surface()
 
+
 		screen.blit(mapSurface, (0,0))	#Draw the new map
 		screen.blit(marker, markerDrawPos)	#draw the marker
+
+		#Draw the types
+		for xPos in range(sectionPos[0], sectionPos[0]+sectionSize[0]):
+			for yPos in range(sectionPos[1], sectionPos[1]+sectionSize[1]):
+				screen.blit(font.render(str(mapDict.get((xPos,yPos),(0,0))[1]), 1, (10, 10, 10)), ((xPos-sectionPos[0])*tileSize[0], (yPos-sectionPos[1])*tileSize[1]) )
+
 
 		pygame.display.flip()
 		pygame.time.wait(50)
@@ -76,6 +79,7 @@ def tileEdit(screen, tileImageFileName, mapFileName, tileSize):
 		userInput = getInput(15,5)				#Get user input and update variables accordingly
 												#We look for input for 15 milliseconds, returing to processor for 5 every time we look
 		if userInput != None:
+			print(userInput)
 
 			if userInput == "left":
 				sectionPos[0] -= multiplier
@@ -93,9 +97,23 @@ def tileEdit(screen, tileImageFileName, mapFileName, tileSize):
 			elif userInput == "x":
 				multiplier -= 1
 
+			elif userInput == [1]:
+				sectionPos[1] += multiplier
+			elif userInput == [2]:
+				sectionPos[1] += multiplier
+			elif userInput == [3]:
+				sectionPos[1] += multiplier
+
 
 			elif userInput == "quit" or userInput == "escape":
 				stop = True
+
+	if input("Save? (y/n):") == 'y':
+		print("Saving!")
+		pickle.dump(mapDict, open(mapFileName, "wb") )
+		print("Done!")
+	else:
+		print("Not saving!")
 
 
 def mapConvert(screen, tileImageFileName, mapFileName, tileSize):
