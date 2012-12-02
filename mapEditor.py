@@ -97,12 +97,12 @@ def tileEdit(screen, tileImageFileName, mapFileName, tileSize):
 			elif userInput == "x":
 				multiplier -= 1
 
-			elif userInput == [1]:
-				sectionPos[1] += multiplier
-			elif userInput == [2]:
-				sectionPos[1] += multiplier
-			elif userInput == [3]:
-				sectionPos[1] += multiplier
+			elif userInput[1] == "1":
+				mapDict[ (sectionPos[0]+markerPos[0],sectionPos[1]+markerPos[1]) ] = mapDict[ (sectionPos[0]+markerPos[0],sectionPos[1]+markerPos[1]) ] [0], 1
+			elif userInput[1] == "2":
+				mapDict[ (sectionPos[0]+markerPos[0],sectionPos[1]+markerPos[1]) ] = mapDict[ (sectionPos[0]+markerPos[0],sectionPos[1]+markerPos[1]) ] [0], 2
+			elif userInput[1] == "3":
+				mapDict[ (sectionPos[0]+markerPos[0],sectionPos[1]+markerPos[1]) ] = mapDict[ (sectionPos[0]+markerPos[0],sectionPos[1]+markerPos[1]) ] [0], 3
 
 
 			elif userInput == "quit" or userInput == "escape":
