@@ -96,14 +96,17 @@ class Person:
 		return(0)
 
 	#This function draws the character. It takes in quite a few parameters for drawing, including drawingStage, which is the stage of sub-major-frame drawing that we are doing for smooth movement. 0 is major frame
-	def draw(self, surface, sectionPos, sectionSize, tileSize, sectionPixelOffset, drawingStage):
+	def draw(self, surface, mapDict, sectionPos, sectionSize, tileSize, sectionPixelOffset, drawingStage):
 	
 		if drawingStage == 1:		#If this is the first sub-major-frame stage, set up our movement stuff for the next sub-major frames
 			if self._inbetweanMove:	#If we're moving
 				self._movingPos[0], incXAmmount = incrementTo0(self._movingPos[0])										#Move our movement ammounts closer to 0 and get what direction we're moving
 				self._movingPos[1], incYAmmount = incrementTo0(self._movingPos[1])
 				self.faceingDirection = (incXAmmount, incYAmmount)														#The direction we're going is equal to the increment for the next position
-				self.position[0], self.position[1] = (self.position[0]+incXAmmount) , (self.position[1]+incYAmmount)	#Change the current position accordingly
+				if mapDict[(self.position[0]+incXAmmount) , (self.position[1]+incYAmmount)][1] == 2: 					#If the new position is ground
+					self.position[0], self.position[1] = (self.position[0]+incXAmmount) , (self.position[1]+incYAmmount)	#Change the current position accordingly
+				else:
+					print("Not walkable!")
 			
 			self.ownPixelOffset = ( ( self.position[0] - self.previousPosition[0])*(tileSize[0]//4)), ((self.position[1] - self.previousPosition[1])*(tileSize[1]//4)  )	#Calculate the offset for the sub-major frames. (will be multiplied by the drawingStage)
 
@@ -207,7 +210,7 @@ def goOverworld(world):
 	personTileEnd = personTileEnd[0]*(bigGrid[0]+1), personTileEnd[1]*(bigGrid[1]+1)
 
 	#Make our player character. Use the list of images loaded from parseGridImages(name, tileStart, tileEnd, beginTile, endTile, step, colorkey, border)
-	playerCharacter = Person(parseGridImage("data/npcoverworldsDP.png", (0,0), (32,32), personTileBegin, personTileEnd, 1, -1, 1), (10,10))	#create our player character
+	playerCharacter = Person(parseGridImage("data/npcoverworldsDP.png", (0,0), (32,32), personTileBegin, personTileEnd, 1, -1, 1), (10,100))	#create our player character
 	NPCList = [Person(parseGridImage("data/npcoverworldsDP.png", (0,0), (32,32), (0,0), (3,4), 1), (10,10))]	#create a random person
 
 	NPCList[0].go( (20,20) )
@@ -228,9 +231,9 @@ def goOverworld(world):
 			screen.blit(oldMap, (pixelOffset[0]*i-tileSize[0], pixelOffset[1]*i-tileSize[1]) ) #The -tileSize are to take into account the extra border area drawn above
 			
 			#Note we use previousSectionPos, because we've updated sectionPos, but are still using the old map to draw, so since we pass in the map's pixelOffset, we also pass in the old map position
-			playerCharacter.draw(screen, previousSectionPos, sectionSize, tileSize, (pixelOffset[0]*i, pixelOffset[1]*i), i)
+			playerCharacter.draw(screen, mapDict, previousSectionPos, sectionSize, tileSize, (pixelOffset[0]*i, pixelOffset[1]*i), i)
 			for npc in NPCList:
-				npc.draw(screen, previousSectionPos, sectionSize, tileSize, (pixelOffset[0]*i, pixelOffset[1]*i), i)
+				npc.draw(screen, mapDict, previousSectionPos, sectionSize, tileSize, (pixelOffset[0]*i, pixelOffset[1]*i), i)
 
 			pygame.display.flip()
 	
@@ -243,9 +246,9 @@ def goOverworld(world):
 		screen.blit(gray, (0,0) ) #Background
 		screen.blit(drawMap(mapDict, tileList, tileSize, sectionSize, sectionPos), (0,0))	#Draw the new map
 
-		playerCharacter.draw(screen, sectionPos, sectionSize, tileSize, (0,0), 0)					#Draw the person with the new position
+		playerCharacter.draw(screen, mapDict, sectionPos, sectionSize, tileSize, (0,0), 0)					#Draw the person with the new position
 		for npc in NPCList:
-			npc.draw(screen, sectionPos, sectionSize, tileSize, (0,0), 0)
+			npc.draw(screen, mapDict, sectionPos, sectionSize, tileSize, (0,0), 0)
 
 		pygame.display.flip()
 		pygame.time.wait(frameDelay-5)

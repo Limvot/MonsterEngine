@@ -53,6 +53,7 @@ def tileEdit(screen, tileImageFileName, mapFileName, tileSize):
 	if pygame.font:					#Only if fonts are enabled
 		font = pygame.font.Font(None, 16)										#Font size
 
+	multiEdit = False
 
 	stop = False
 	while stop == False:		#Go until we quit
@@ -97,15 +98,35 @@ def tileEdit(screen, tileImageFileName, mapFileName, tileSize):
 			elif userInput == "x":
 				multiplier -= 1
 
-			elif userInput[1] == "1":
-				mapDict[ (sectionPos[0]+markerPos[0],sectionPos[1]+markerPos[1]) ] = mapDict[ (sectionPos[0]+markerPos[0],sectionPos[1]+markerPos[1]) ] [0], 1
-			elif userInput[1] == "2":
-				mapDict[ (sectionPos[0]+markerPos[0],sectionPos[1]+markerPos[1]) ] = mapDict[ (sectionPos[0]+markerPos[0],sectionPos[1]+markerPos[1]) ] [0], 2
-			elif userInput[1] == "3":
-				mapDict[ (sectionPos[0]+markerPos[0],sectionPos[1]+markerPos[1]) ] = mapDict[ (sectionPos[0]+markerPos[0],sectionPos[1]+markerPos[1]) ] [0], 3
+			elif userInput == "a":
+				if multiEdit == True:
+					multiEdit = False
+				else:
+					multiEdit = True
 
 
-			elif userInput == "quit" or userInput == "escape":
+			elif multiEdit == False:
+				if userInput[1] == "1":
+					mapDict[ (sectionPos[0]+markerPos[0],sectionPos[1]+markerPos[1]) ] = mapDict[ (sectionPos[0]+markerPos[0],sectionPos[1]+markerPos[1]) ] [0], 1
+				elif userInput[1] == "2":
+					mapDict[ (sectionPos[0]+markerPos[0],sectionPos[1]+markerPos[1]) ] = mapDict[ (sectionPos[0]+markerPos[0],sectionPos[1]+markerPos[1]) ] [0], 2
+				elif userInput[1] == "3":
+					mapDict[ (sectionPos[0]+markerPos[0],sectionPos[1]+markerPos[1]) ] = mapDict[ (sectionPos[0]+markerPos[0],sectionPos[1]+markerPos[1]) ] [0], 3
+			else:
+				if userInput[1] == "1":
+					newValue = 1
+				elif userInput[1] == "2":
+					newValue = 2
+				elif userInput[1] == "3":
+					newValue = 3
+
+				imageKey = mapDict[ (sectionPos[0]+markerPos[0],sectionPos[1]+markerPos[1]) ][0]
+				for key in mapDict.keys():
+					if mapDict[key][0] == imageKey:
+						mapDict[key] = imageKey, newValue
+
+
+			if userInput == "quit" or userInput == "escape":
 				stop = True
 
 	if input("Save? (y/n):") == 'y':
@@ -152,7 +173,7 @@ pygame.init()
 screen = pygame.display.set_mode( (1000,1000) )
 pygame.display.set_caption("Awesome map editor!")
 pygame.mouse.set_visible(1)
-tileEdit(screen, "data/maps/hoenn/hoenn.bmp", "data/maps/hoenn/hoennMap.pickle", (16,16))
+tileEdit(screen, "data/maps/kanto/kanto.bmp", "data/maps/kanto/kantoMap.pickle", (16,16))
 
 #menu()
 
