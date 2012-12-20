@@ -9,6 +9,15 @@ if not pygame.font: print("Fonts will be disabled")
 if not pygame.mixer: print("Sound will be disabled")
 
 
+#This function takes in a number and advances it one toward zero, returning the new number and the number it subtracted to get it there 10 -> (9, 1), -10 -> (-9,-1)
+def incrementTo0(number):
+	if number == 0:
+		return (0,0)
+	elif number > 0:
+		return (number-1, 1)
+	else:
+		return(number+1, -1)
+
 def load_image(name, colorkey=None):
 	#fullname = os.path.join('data', name)
 	fullname = name
