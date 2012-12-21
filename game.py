@@ -170,7 +170,7 @@ def battle(trainer1, trainer2):
 	#Get our first non-fainted pokemon
 	ourMonster = trainer1.getAbleMonster()
 	opponentMonster = trainer2.getAbleMonster()
-	while opponentMonster not == 0:
+	while not opponentMonster == 0:
 		fight(ourMonster, opponentMonster)
 		if ourMonster.battleStats[0] <= 1:
 			ourMonster = trainer1.getAbleMonster()
